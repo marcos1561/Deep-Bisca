@@ -1,0 +1,1 @@
+[{"epsilon": 1, "max_epsilon": 1, "min_epsilon": 0.01, "decay": 0.00011460091032195355}, {"train_episodes": 40000, "steps_to_update_target_model": 100, "steps_to_update_p2_model": 100, "steps_to_train_model": 13, "MIN_REPLAY_SIZE": 1000, "batch_size": 256, "learning_rate_nt": 0.001, "learning_rate": 0.5, "discount_factor": 0.618, "model_main": null, "model_p2": null}]

@@ -1,9 +1,6 @@
-from tabnanny import verbose
 import numpy as np
 
 class Bisca():
-    REWARDS = {"win_round_r": 5, "win_ep_r": 0}
-
     NULL_CARD = np.array([0, 0, 0, 0, -1])
     HAND_SORT_CONST = np.array([1, 3, 5, 7, 1])
     WINNER_TO_PLAYER_ID = {1: 0, -1: 1}
@@ -221,7 +218,7 @@ class Bisca():
 
             played_cards = [played_card_1, played_card_2]
         else:
-            played_card_2 = self.current_state[0][0]
+            played_card_2 = self.current_state[0][0].copy()
             played_cards = [played_card_2, played_card_1]
         ######
 
@@ -278,9 +275,9 @@ class Bisca():
         # Rewards values
         # win_round_r = 5  # round win reward
         # win_ep_r = 20  # game win reward
-        win_round_r = Bisca.REWARDS["win_round_r"]
-        win_ep_r = Bisca.REWARDS["win_ep_r"]
-
+        win_round_r = 5  # round win reward
+        win_ep_r = 20  # game win reward
+        
         # Check if the game has ended
         sum_null_card = self.current_state[0][Bisca.HAND_IDS, -1].sum()
         done = False
@@ -312,7 +309,7 @@ class Bisca():
         ######
 
         # Player 1 number of cards played after the action
-        info = self.num_cards_played[0]
+        info = [(played_card_1, played_card_2), winner, self.num_cards_played[0]]
 
         return self.current_state[0].copy(), reward, done, info
 

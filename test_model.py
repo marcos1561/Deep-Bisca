@@ -1,4 +1,5 @@
 import tensorflow as tf
+import random
 
 from custom_env import Bisca
 from custom_env import np
@@ -29,6 +30,7 @@ def test_choose_play(states, models, model_names=None):
         hand = s[Bisca.HAND_IDS]
 
         actions = []
+        predictions = []
         for model in models:
             # find number of cards played in the current state
             num_cards_played = 0
@@ -47,7 +49,9 @@ def test_choose_play(states, models, model_names=None):
                 predicted = model.predict(state_reshaped, verbose=0).flatten()
                 max_p = predicted[num_cards_played:].max()
                 action = np.where(predicted == max_p)[0][0]
+               
                 actions.append(action)
+                predictions.append(predicted)
 
         # Print current state and models played cards.
         Bisca.print_state(s)
@@ -55,13 +59,11 @@ def test_choose_play(states, models, model_names=None):
 
         max_name_length = max([len(m) for m in model_names])
 
-        linha1 = "Modelo".center(max_name_length) + " | Carta Jogada"
-        sep_line = "-"*(max_name_length+1) + "|" + "-" * \
-            (len(linha1) - 2 - max_name_length)
+        linha1 = "Modelo".center(max_name_length+1) + "| Carta Jogada | " +  "Predição".center(28)
+        sep_line = "-"*(max_name_length+1) + "|" + "-"*14 + "|" + "-"*30
         print(linha1, sep_line, sep="\n")
-        for m_name, action in zip(model_names, actions):
-            print(m_name.ljust(max_name_length),
-                  f" | {Bisca.printable_card(hand[action])}", sep="")
+        for m_name, action, pred in zip(model_names, actions, predictions):
+            print(m_name.ljust(max_name_length+1), "| ", f"{Bisca.printable_card(hand[action]):<13}", "| ", f"{pred}", sep="")
             print(sep_line)
         print("\n", "#"*20, "\n", sep="")
 
@@ -93,7 +95,7 @@ def test_against_model(total_eps, model1="Random", model2="Random"):
     while num_ep < total_eps:
         num_ep += 1
         if num_ep % freq_prog == 0:
-            print(f"Progresso: {num_ep/total_eps*100:.0f} % | pc_win = {wins/num_ep:.2f}")
+            print(f"Progresso: {num_ep/total_eps*100:.0f} % | pc_win = {wins/num_ep*100:.2f}")
 
         observation = env.reset(first_move=first_move_list[num_ep-1], model=model2)
         done = False
@@ -112,7 +114,7 @@ def test_against_model(total_eps, model1="Random", model2="Random"):
     print(f"Porcentam de vitória: {wins/total_eps*100:.2f}")
 
 
-def play_against(first_move, model, names=["jogador_1", "jogador_2"], verbose=0):
+def play_against(first_move, model, names=["jogador_1", "jogador_2"], show_model_hand=False, verbose=0):
     '''
         Play against model.
 
@@ -136,6 +138,7 @@ def play_against(first_move, model, names=["jogador_1", "jogador_2"], verbose=0)
     while True:
         num_ep += 1
         round_count = 0
+        first_move = random.randint(0, 1)
         state = env.reset(first_move=first_move, model=model)
 
         print(f"### PARTIDA {num_ep} ###")
@@ -145,7 +148,8 @@ def play_against(first_move, model, names=["jogador_1", "jogador_2"], verbose=0)
             round_count += 1
             print(f"Rodada {round_count}", "-"*20, sep="\n")
             env.print_state(state)
-            env.print_state(env.current_state[1], only_cards=True)
+            if show_model_hand:
+                env.print_state(env.current_state[1], only_cards=True)
 
             valid_action = False
             while not valid_action:
@@ -158,7 +162,7 @@ def play_against(first_move, model, names=["jogador_1", "jogador_2"], verbose=0)
             if action == -2:
                 return
 
-            new_state, reward, done, info = env.step(action, model, model_name=names)
+            new_state, reward, done, info = env.step(action, model, model_name=names, verbose=1)
 
             if verbose:
                 print(f"\nreward: {reward} | done:{done}\n")
@@ -172,19 +176,27 @@ def play_against(first_move, model, names=["jogador_1", "jogador_2"], verbose=0)
                 print(f"Placar: {names[0]} {env.count_round_win[0]} X {names[1]} {env.count_round_win[1]}")
                 print(f"Porcentagem de vitórias de {names[0]}: {wins/num_ep*100:.2f}\n")
 
-model1 = tf.keras.models.load_model("saved_model/bianca_v1")
-# model2 = tf.keras.models.load_model("saved_model/bianca_v2")
-# # model3 = tf.keras.models.load_model("saved_model/bianca_teste")
 
-# models = [model1, model2]
-# names = ["bianca", "bianca_v2"]
-states = ["9-c 5-e 1-e 1-p 2-c VAZIO- VAZIO- VAZIO- VAZIO- -1 -1", 
-        "9-p 5-e 1-e 1-p 2-c VAZIO- VAZIO- VAZIO- VAZIO- -1 -1",
-        "9-o 5-e 1-e 1-p 2-c VAZIO- VAZIO- VAZIO- VAZIO- -1 -1",
-        "9-e 5-e 1-e 1-p 2-c VAZIO- VAZIO- VAZIO- VAZIO- -1 -1"]
+if __name__== "__main__":
+    model1_name = "bianca_v5"
+    model2_name = "bianca_v2"
+
+    model1 = tf.keras.models.load_model("saved_model/" + model1_name)
+    model2 = tf.keras.models.load_model("saved_model/" + model2_name)
+
+    models = [model1, model2]
+    model_names = [model1_name, model2_name]
+
+    states = ["9-p 5-e 1-e 1-p 2-c VAZIO- VAZIO- VAZIO- VAZIO- -1 -1", 
+            "9-p 5-e 1-e 3-p 2-c VAZIO- VAZIO- VAZIO- VAZIO- -1 -1",
+            "9-p 5-e 1-e 12-p 2-c VAZIO- VAZIO- VAZIO- VAZIO- -1 -1",
+            "9-p 5-e 1-e 8-p 2-c VAZIO- VAZIO- VAZIO- VAZIO- -1 -1"]
+    # states = ["10-e 5-e 9-e 1-p 2-c VAZIO- VAZIO- VAZIO- VAZIO- -1 -1",
+    #         "3-o 4-o 2-o 12-o 1-o VAZIO- VAZIO- VAZIO- VAZIO- -1 -1",
+    #         "3-o 4-p 2-o 12-o 1-o VAZIO- VAZIO- VAZIO- VAZIO- -1 -1"]
 
 
-test_choose_play(states, [model1], ["bianca"])
-print(Bisca.human_to_machine([states[-1]]))
-# play_against(True, model1, ["marcos", "bianca"])
-# test_against_model(1000, model1, "Random")
+    # test_choose_play(states, models, model_names)
+    # print(Bisca.human_to_machine([states[-1]]))
+    play_against(True, model1, ["marcos", "bianca"], show_model_hand=True)
+    # test_against_model(2000, model1, model2)
