@@ -179,7 +179,7 @@ def play_against(first_move, model, names=["jogador_1", "jogador_2"], show_model
 
 if __name__== "__main__":
     model1_name = "bianca_v5"
-    model2_name = "bianca_v2"
+    model2_name = "bianca_v4"
 
     model1 = tf.keras.models.load_model("saved_model/" + model1_name)
     model2 = tf.keras.models.load_model("saved_model/" + model2_name)
@@ -198,5 +198,5 @@ if __name__== "__main__":
 
     # test_choose_play(states, models, model_names)
     # print(Bisca.human_to_machine([states[-1]]))
-    play_against(True, model1, ["marcos", "bianca"], show_model_hand=True)
-    # test_against_model(2000, model1, model2)
+    # play_against(True, model1, ["marcos", "bianca"], show_model_hand=True)
+    test_against_model(2000, model1, model2)
