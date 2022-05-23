@@ -1,7 +1,0 @@
-Abra um terminal nessa pasta e execute o seguinte comando
-
-    pip install -r requirements.txt
-
-Em sequência execute o seguinte comando para jogar bisca :)
-
-    python .\main.py

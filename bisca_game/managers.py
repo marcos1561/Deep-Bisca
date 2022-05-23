@@ -15,7 +15,11 @@ class ScreenManager:
             pygame.display.flip()
             self.has_changed = False
 
-class HandManager():
+class SceneManager:
+    def __init__(self) -> None:
+        self.current_scene = 0
+
+class HandManager:
     def __init__(self) -> None:
         pass
 
