@@ -20,27 +20,27 @@ np.random.seed(RANDOM_SEED)
 
 ### SETUP ###
 #-> model name
-model_name = "bianca_v5"
+model_name = "bianca_v6"
 
 # -> Neural network
 learning_rate_nt = 0.001
 
 # -> Bellmans equation
-learning_rate = 0.4
+learning_rate = 0.3
 discount_factor = 0.618
 
 # -> Train
 train_episodes = 20_000
 steps_to_update_target_model = 100
-steps_to_update_p2_model = 300
+steps_to_update_p2_model = 5000
 steps_to_train_model = 9
 
 MIN_REPLAY_SIZE = 1_000
 batch_size = 64 * 3
 
 # -> Initial models
-model_main = "bianca_v4"
-model_p2 = "bianca_v4"
+model_main = "bianca_v6"
+model_p2 = "bianca_v6"
 
 # -> rewards
 rewards = {"win_round_r": 5, "win_ep_r": 0}
@@ -75,6 +75,7 @@ def agent(state_shape, action_shape, learning_rate):
     model = keras.Sequential()
     model.add(keras.layers.Dense(24*3, input_shape=state_shape, activation='relu', kernel_initializer=init))
     model.add(keras.layers.Dense(24*2, activation='relu', kernel_initializer=init))
+    model.add(keras.layers.Dense(30, activation='relu', kernel_initializer=init))
     model.add(keras.layers.Dense(30, activation='relu', kernel_initializer=init))
     model.add(keras.layers.Dense(18, activation='relu', kernel_initializer=init))
     model.add(keras.layers.Dense(action_shape,activation='linear', kernel_initializer=init))

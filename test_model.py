@@ -178,8 +178,8 @@ def play_against(first_move, model, names=["jogador_1", "jogador_2"], show_model
 
 
 if __name__== "__main__":
-    model1_name = "bianca_v5"
-    model2_name = "bianca_v4"
+    model1_name = "bianca_v6"
+    model2_name = "bianca_v5"
 
     model1 = tf.keras.models.load_model("saved_model/" + model1_name)
     model2 = tf.keras.models.load_model("saved_model/" + model2_name)
@@ -188,9 +188,11 @@ if __name__== "__main__":
     model_names = [model1_name, model2_name]
 
     states = ["9-p 5-e 1-e 1-p 2-c VAZIO- VAZIO- VAZIO- VAZIO- -1 -1", 
-            "9-p 5-e 1-e 3-p 2-c VAZIO- VAZIO- VAZIO- VAZIO- -1 -1",
-            "9-p 5-e 1-e 12-p 2-c VAZIO- VAZIO- VAZIO- VAZIO- -1 -1",
-            "9-p 5-e 1-e 8-p 2-c VAZIO- VAZIO- VAZIO- VAZIO- -1 -1"]
+            "9-p 5-e 1-e 10-p 2-c VAZIO- VAZIO- VAZIO- VAZIO- -1 -1",
+            "9-p 5-e 1-e 8-p 2-c VAZIO- VAZIO- VAZIO- VAZIO- -1 -1",
+            "9-p 5-e 1-o 10-p 2-c VAZIO- VAZIO- VAZIO- VAZIO- -1 -1",
+            "VAZIO- 5-e 1-e 8-p 2-c VAZIO- VAZIO- VAZIO- VAZIO- -1 -1",
+            "VAZIO- 5-e VAZIO- 10-o 3-c 5-o 2-p VAZIO- VAZIO- 1 -1"]
     # states = ["10-e 5-e 9-e 1-p 2-c VAZIO- VAZIO- VAZIO- VAZIO- -1 -1",
     #         "3-o 4-o 2-o 12-o 1-o VAZIO- VAZIO- VAZIO- VAZIO- -1 -1",
     #         "3-o 4-p 2-o 12-o 1-o VAZIO- VAZIO- VAZIO- VAZIO- -1 -1"]
@@ -198,5 +200,5 @@ if __name__== "__main__":
 
     # test_choose_play(states, models, model_names)
     # print(Bisca.human_to_machine([states[-1]]))
-    # play_against(True, model1, ["marcos", "bianca"], show_model_hand=True)
-    test_against_model(2000, model1, model2)
+    play_against(True, model1, ["marcos", "bianca"], show_model_hand=True)
+    # test_against_model(1000, model1, model2)

@@ -32,7 +32,7 @@ def main():
 
     ### Scenes ###
     # Game scene
-    model_name = "bianca_v5"
+    model_name = "bianca_v6"
     game = scenes.Game(model_name, hand_manager, game_display_shape)
 
     # Menu scene

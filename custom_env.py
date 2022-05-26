@@ -146,10 +146,14 @@ class Bisca():
                 action: int
                     action chosen
         '''
+        if self.num_cards_played[player] > 2:
+            print(f"estado {player}", self.current_state[0]) 
+
         if model == "Random":
             possible_actions = self.ACTION_SPACE[self.num_cards_played[player]:]
             action = np.random.choice(possible_actions)
         else:
+            
             state_reshaped = Bisca.reshape_state(self.current_state[player])
             state_reshaped = state_reshaped.reshape([1, state_reshaped.size])
             predicted = model.predict(state_reshaped, verbose=0).flatten()
