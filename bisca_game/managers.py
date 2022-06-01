@@ -5,7 +5,7 @@ class ScreenManager:
         self.screen = screen
         self.has_changed = True
 
-    def update_screen(self, sprites):
+    def update_screen(self, sprites, backgroud=None):
         if self.has_changed:
             self.screen.fill((0,0,0))
 

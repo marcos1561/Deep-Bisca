@@ -114,18 +114,21 @@ def test_against_model(total_eps, model1="Random", model2="Random"):
     print(f"Porcentam de vitória: {wins/total_eps*100:.2f}")
 
 
-def play_against(first_move, model, names=["jogador_1", "jogador_2"], show_model_hand=False, verbose=0):
+def play_against(first_move, model, names=["jogador_1", "jogador_2"], first_move_random=False, show_model_hand=False, verbose=0):
     '''
         Play against model.
 
         Parameters:
             first_move: bool
-                If true, tou will play first.
+                If true, tou will play first and if false you will play second.
 
             model: tf model or "Random"
 
             names: list of str
                 Names for you (first element) and the model (second element)
+
+            first_move_random: bool
+                If true, the first player to play is random.
 
             verbose: int
                 If 0 no verbose, if 1 verbose.
@@ -138,9 +141,10 @@ def play_against(first_move, model, names=["jogador_1", "jogador_2"], show_model
     while True:
         num_ep += 1
         round_count = 0
-        first_move = random.randint(0, 1)
+        
+        if first_move_random:
+            first_move = random.randint(0, 1)
         state = env.reset(first_move=first_move, model=model)
-
         print(f"### PARTIDA {num_ep} ###")
 
         done = False
@@ -178,8 +182,9 @@ def play_against(first_move, model, names=["jogador_1", "jogador_2"], show_model
 
 
 if __name__== "__main__":
-    model1_name = "bianca_v6"
-    model2_name = "bianca_v5"
+    model1_name = "bianca_teste_4"
+    model2_name = "bianca_teste_3"
+    # model2_name = "bianca_v5"
 
     model1 = tf.keras.models.load_model("saved_model/" + model1_name)
     model2 = tf.keras.models.load_model("saved_model/" + model2_name)
@@ -192,13 +197,13 @@ if __name__== "__main__":
             "9-p 5-e 1-e 8-p 2-c VAZIO- VAZIO- VAZIO- VAZIO- -1 -1",
             "9-p 5-e 1-o 10-p 2-c VAZIO- VAZIO- VAZIO- VAZIO- -1 -1",
             "VAZIO- 5-e 1-e 8-p 2-c VAZIO- VAZIO- VAZIO- VAZIO- -1 -1",
-            "VAZIO- 5-e VAZIO- 10-o 3-c 5-o 2-p VAZIO- VAZIO- 1 -1"]
+            "VAZIO- 5-e VAZIO- 7-o 10-c 5-o 2-p VAZIO- VAZIO- 1 -1"]
     # states = ["10-e 5-e 9-e 1-p 2-c VAZIO- VAZIO- VAZIO- VAZIO- -1 -1",
     #         "3-o 4-o 2-o 12-o 1-o VAZIO- VAZIO- VAZIO- VAZIO- -1 -1",
     #         "3-o 4-p 2-o 12-o 1-o VAZIO- VAZIO- VAZIO- VAZIO- -1 -1"]
 
 
-    # test_choose_play(states, models, model_names)
+    test_choose_play(states, models, model_names)
     # print(Bisca.human_to_machine([states[-1]]))
-    play_against(True, model1, ["marcos", "bianca"], show_model_hand=True)
+    # play_against(False, model1, ["marcos", "bianca"], first_move_random=False, show_model_hand=True)
     # test_against_model(1000, model1, model2)

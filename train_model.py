@@ -1,13 +1,14 @@
-import custom_env
-
 import tensorflow as tf
 from tensorflow import keras
 import numpy as np
-import matplotlib.pyplot as plt
 from collections import deque
 import random
 import time
 import json
+
+import custom_env
+import debug_model
+import utils
 
 RANDOM_SEED = 5
 tf.random.set_seed(RANDOM_SEED)
@@ -20,27 +21,29 @@ np.random.seed(RANDOM_SEED)
 
 ### SETUP ###
 #-> model name
-model_name = "bianca_v6"
+model_name = "bianca_teste_4"
 
 # -> Neural network
 learning_rate_nt = 0.001
 
 # -> Bellmans equation
-learning_rate = 0.3
+learning_rate = 0.7
 discount_factor = 0.618
 
 # -> Train
-train_episodes = 20_000
+train_episodes = 40_000
 steps_to_update_target_model = 100
-steps_to_update_p2_model = 5000
+steps_to_update_p2_model = 20_000 * 3
 steps_to_train_model = 9
 
 MIN_REPLAY_SIZE = 1_000
-batch_size = 64 * 3
+batch_size = 64 * 2
 
 # -> Initial models
-model_main = "bianca_v6"
-model_p2 = "bianca_v6"
+model_main_name = "bianca_v6"
+model_p2_name = "bianca_v6"
+model_main_name = "bianca_teste_3"
+model_p2_name = "bianca_teste_3"
 
 # -> rewards
 rewards = {"win_round_r": 5, "win_ep_r": 0}
@@ -62,8 +65,10 @@ epsilon_setup = {"epsilon": epsilon, "max_epsilon":max_epsilon, "min_epsilon": m
 train_setup = {"train_episodes":train_episodes, "steps_to_update_target_model":steps_to_update_target_model,
                 "steps_to_update_p2_model":steps_to_update_p2_model, "steps_to_train_model":steps_to_train_model,
                 "MIN_REPLAY_SIZE": MIN_REPLAY_SIZE, "batch_size":batch_size, "learning_rate_nt":learning_rate_nt, 
-                "learning_rate": learning_rate, "discount_factor":discount_factor, "model_main":model_main, 
-                "model_p2": model_p2, "rewards": rewards}
+                "learning_rate": learning_rate, "discount_factor":discount_factor, "model_main_name":model_main_name, 
+                "model_p2_name": model_p2_name, "rewards": rewards}
+
+debug = debug_model.DebugModel() 
 
 def agent(state_shape, action_shape, learning_rate):
     """ The agent maps X-states to Y-actions
@@ -93,9 +98,9 @@ def train(replay_memory, model, target_model, train_setup):
     batch_size = train_setup["batch_size"]
     mini_batch = random.sample(replay_memory, batch_size)
     current_states = np.array([transition[0] for transition in mini_batch])
-    current_qs_list = model.predict(current_states)
+    current_qs_list = model.predict(current_states, verbose=0)
     new_current_states = np.array([transition[3] for transition in mini_batch])
-    future_qs_list = target_model.predict(new_current_states)
+    future_qs_list = target_model.predict(new_current_states, verbose=0)
 
     X = []
     Y = []
@@ -121,49 +126,42 @@ def main(epsilon_setup, train_setup):
     min_epsilon = epsilon_setup["min_epsilon"]  # At a minimum, we'll always explore 1% of the time
     decay = epsilon_setup["decay"]
 
-    # Initialize the Target and Main models
-    model_main = train_setup["model_main"]
-    model_p2 = train_setup["model_p2"]
+    ### Initialize the models ###
+    model_main_name = train_setup["model_main_name"]
+    model_p2_name = train_setup["model_p2_name"]
     
-    if model_main == None:
+    if model_main_name == None:
         model = agent(env.OBSERVATION_N, env.ACTION_N, train_setup["learning_rate_nt"])
     else:
-        model = tf.keras.models.load_model(f"saved_model/{model_main}")
+        model = tf.keras.models.load_model(f"saved_model/{model_main_name}")
     
     target_model = agent(env.OBSERVATION_N, env.ACTION_N, train_setup["learning_rate_nt"])
     target_model.set_weights(model.get_weights())
 
-    if model_p2 == None:
+    if model_p2_name == None:
         p2_model = agent(env.OBSERVATION_N, env.ACTION_N, train_setup["learning_rate_nt"])
         p2_model.set_weights(model.get_weights())
     else:
-        p2_model = tf.keras.models.load_model(f"saved_model/{model_p2}")
-    
-    # model = tf.keras.models.load_model(f"saved_model/bianca_v1")
-    # target_model = tf.keras.models.load_model(f"saved_model/bianca_v1")
-    # target_model.set_weights(model.get_weights())
+        p2_model = tf.keras.models.load_model(f"saved_model/{model_p2_name}")
+    ######
 
     replay_memory = deque(maxlen=50_000)
 
     update_target_model_count = 0
     update_p2_model_count = 0
     train_model_count = 0
+
     steps_to_update_target_model = train_setup["steps_to_update_target_model"]
     steps_to_update_p2_model = train_setup["steps_to_update_p2_model"]
     steps_to_train_model = train_setup["steps_to_train_model"]
 
-    save_reward_freq = 200
-    total_reward_list = np.zeros(int(train_episodes/save_reward_freq))
-    reward_sum = 0
-    reward_count = 0
-
+    freq_test_estate = int(train_episodes/200)
     freq_prog = int(train_episodes/30)
-    # save_unique_card = np.random.random(train_episodes) > 0.5
+
     is_first_move = np.random.random(train_episodes) > 0.5
     for episode in range(train_episodes):
         total_training_rewards = 0
-        observation = env.reset(
-            first_move=is_first_move[episode], model=p2_model)
+        observation = env.reset(first_move=is_first_move[episode], model=p2_model)
 
         done = False
         while not done:
@@ -174,21 +172,12 @@ def main(epsilon_setup, train_setup):
             random_number = random.random()
             # Explore using the Epsilon Greedy Exploration Strategy
             if random_number <= epsilon:
-                # Explore
                 action = env.get_action(model="Random", player=0) 
             else:
-                # Exploit best known action
                 action = env.get_action(model, 0)
 
             new_observation, reward, done, info = env.step(action, model=p2_model)
 
-            # save_obs = True
-            # if info == 3:
-            #     save_obs = save_unique_card[episode]
-
-            # if save_obs:
-            #     replay_memory.append([env.reshape_state(observation), action, reward, 
-            #                         env.reshape_state(new_observation), done, info])
             replay_memory.append([env.reshape_state(observation), action, reward, 
                                 env.reshape_state(new_observation), done, info])
 
@@ -201,16 +190,12 @@ def main(epsilon_setup, train_setup):
             total_training_rewards += reward
 
             if done:
-                reward_sum += total_training_rewards
-                if (episode+1) % save_reward_freq == 0:
-                    total_reward_list[reward_count] = reward_sum/save_reward_freq
-                    reward_count += 1
-                    reward_sum = 0
+                if episode % freq_test_estate == 0:
+                    debug.test_state(model, episode)
 
                 # print('Total training rewards: {} after n steps = {} with final reward = {}'.format(total_training_rewards, episode, reward))
                 if episode % freq_prog == 0:
-                    print(f"Progress: {episode/train_episodes*100:.2f} %")
-                    print(f"reward_mean: {total_reward_list[reward_count-1]}")
+                    utils.print_progress(episode, train_episodes, time.time() - star_time)
                     # print("epsilon", epsilon)
                     # print("len_memory", len(replay_memory))
 
@@ -230,15 +215,11 @@ def main(epsilon_setup, train_setup):
     with open(f"training_config/{model_name}.json", "w") as config_file:
         config_file.write(json.dumps([epsilon_setup, train_setup]))
 
-    plt.scatter(np.arange(total_reward_list.size), total_reward_list)
-    plt.show()
-
-    # model_p2 = tf.keras.models.load_model(f"saved_model/bianca")
-    # test_against_model(1000, model, model_p2)
+    debug.plot_predictions()
 
 star_time = time.time()
 main(epsilon_setup, train_setup)
 end_time = time.time()
 
-total_time = (end_time - star_time)/60
-print(f'Tempo de execução: {total_time:.2f} min')
+total_time = utils.format_time(end_time - star_time)
+print(f'Tempo de execução: {total_time}')

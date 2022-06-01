@@ -71,3 +71,9 @@ class WinnerLabel(Label):
 
         WinnerLabel.screen_manager.has_changed = True
         
+
+class NumGames(Label):
+    def update_text(self, num_games):
+        self.text = f"Partidas jogadas: {num_games}"
+        self.image = self.font.render(self.text, 1 , self.color)
+        Label.screen_manager.has_changed = True

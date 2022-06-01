@@ -25,16 +25,16 @@ class InputBox(pygame.sprite.Sprite):
 
 
     def handle_event(self, event):
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            # If the user clicked on the input_box rect.
-            if self.rect.collidepoint(event.pos):
-                # Toggle the active variable.
-                self.active = not self.active
-            else:
-                self.active = False
-            # Change the current color of the input box.
-            self.color = InputBox.COLOR_ACTIVE if self.active else InputBox.COLOR_INACTIVE
-            InputBox.screen_manager.has_changed = True
+        # if event.type == pygame.MOUSEBUTTONDOWN:
+        #     # If the user clicked on the input_box rect.
+        #     if self.rect.collidepoint(event.pos):
+        #         # Toggle the active variable.
+        #         self.active = not self.active
+        #     else:
+        #         self.active = False
+        #     # Change the current color of the input box.
+        #     self.color = InputBox.COLOR_ACTIVE if self.active else InputBox.COLOR_INACTIVE
+        #     InputBox.screen_manager.has_changed = True
 
         if self.active:
             if event.type == pygame.KEYDOWN:
@@ -61,7 +61,6 @@ class InputBox(pygame.sprite.Sprite):
                     return self.text_submitted
             
             return None
-
 
 
     def draw(self, screen):

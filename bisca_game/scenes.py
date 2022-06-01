@@ -1,7 +1,6 @@
+from cProfile import label
 from main import pygame
-import cards
-import labels
-import inputs
+import cards, labels, inputs, background
 import custom_env
 from managers import SceneManager, ScreenManager
 
@@ -22,6 +21,10 @@ class Game:
 
         self.showing_results = False
 
+        ### Backgroud ###
+        self.background = background.Background("table_2.jpeg", game_display_shape, rotate=True)
+        ######
+
         ### Sprites for cards ###
         self.hand_sprites = [cards.HandCard("CORINGA", i) for i in range(3)]
         self.bisca_sprite = [cards.BiscaCard("CORINGA")]
@@ -38,10 +41,14 @@ class Game:
         self.winner_label = labels.WinnerLabel(self.font, (10, 10), color=labels_color)
         
         # Label to inform the percentage of wins
-        upper_left_pc_vic = (10, 10 + self.winner_label.bianca_win_round_label.get_height() + 4)
+        upper_left_pc_vic = (10, self.winner_label.rect[1] + self.winner_label.bianca_win_round_label.get_height() + 4)
         self.pc_vic_label = labels.PcWinLabel(self.font, upper_left_pc_vic, "Porcentagem de vitória:", labels_color)
 
-        self.labels_group = pygame.sprite.Group(self.winner_label, self.pc_vic_label)
+        # Total games played
+        upper_left_num_games = (10, self.pc_vic_label.rect[1] + self.pc_vic_label.image.get_height() + 4)
+        self.num_games_label = labels.NumGames(self.font, upper_left_num_games, "Partidas jogadas: 0", labels_color) 
+
+        self.labels_group = pygame.sprite.Group(self.winner_label, self.pc_vic_label, self.num_games_label)
         ######
         
         ### Setup card's positions ###
@@ -56,7 +63,7 @@ class Game:
         cards.update_cards_pos(self.cards_sprites, position_setup)
         ######
 
-        model_path = os.path.join("saved_model", model_name)
+        model_path = os.path.join("..", "saved_model", model_name)
         self.model = load_model(model_path)
 
         self.hand_manager = hand_manager
@@ -121,6 +128,9 @@ class Game:
         if self.env.count_round_win[0] > self.env.count_round_win[1]:
             self.pc_vic_label.victory_count += 1
 
+        # Update total games label
+        self.num_games_label.update_text(self.pc_vic_label.games_count)
+
         # Update win percentage label 
         self.pc_vic_label.update_text()
         
@@ -145,6 +155,10 @@ class Menu:
 
     def __init__(self, game_scene: Game, game_display_shape) -> None:
         self.game_scene = game_scene
+
+        ### Backgroud ###
+        self.background = background.Background("table_2.jpeg", game_display_shape, rotate=True)
+        ######
 
         ### Input text setup ###
         font_size = 100

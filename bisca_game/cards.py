@@ -15,20 +15,20 @@ class Card(pygame.sprite.Sprite):
 
     @staticmethod
     def load_card_image(card_name):
-        card_path = os.path.join("cards_images", card_name + ".jpg")
-        card_image = pygame.image.load(card_path).convert()
+        card_path = os.path.join("images", "cards_images", card_name + ".png")
+        card_image = pygame.image.load(card_path).convert_alpha()
         return card_image
 
     def update_image(self, card_name):
         self.name = card_name
         if card_name == "VAZIO":
-            self.image.fill(pygame.Color(0,0,0,0))
+            self.image.set_alpha(0)
         else:
+            self.image.set_alpha(255)
             self.image = Card.load_card_image(card_name)
             self.image = pygame.transform.scale(self.image, (self.rect.width, self.rect.height))
 
         Card.screen_manager.has_changed = True
-        # self.draw(screen)
 
 
 class BiscaCard(Card):
