@@ -4,7 +4,7 @@ import scenes
 from managers import *
 
 def main():
-    ## Inicialize things ###
+    ## Initialization ###
     pygame.init()
     pygame.display.set_caption("Bisca")
     ###
@@ -32,12 +32,12 @@ def main():
 
     ### Scenes ###
     # Game scene
-    model_name = "bianca_v5"
+    model_name = "histpry_6_checkpoint"
     game = scenes.Game(model_name, hand_manager, game_display_shape)
 
     # Menu scene
     menu = scenes.Menu(game, game_display_shape)
-    ###
+    ######
 
     running = True
     clock = pygame.time.Clock()
@@ -54,9 +54,9 @@ def main():
             game.update(events_list)
         
         if scene_manager.current_scene == 0:
-            screen_manager.update_screen([menu.input_box, menu.input_label])
+            screen_manager.update_screen([menu.background, menu.input_box, menu.input_label])
         elif scene_manager.current_scene == 1:
-            screen_manager.update_screen([game.hand_group, game.other_group, game.labels_group])
+            screen_manager.update_screen([game.background, game.hand_group, game.other_group, game.labels_group])
         
         clock.tick(60)
 

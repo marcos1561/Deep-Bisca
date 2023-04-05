@@ -5,7 +5,7 @@ class ScreenManager:
         self.screen = screen
         self.has_changed = True
 
-    def update_screen(self, sprites):
+    def update_screen(self, sprites, backgroud=None):
         if self.has_changed:
             self.screen.fill((0,0,0))
 
@@ -20,9 +20,6 @@ class SceneManager:
         self.current_scene = 0
 
 class HandManager:
-    def __init__(self) -> None:
-        pass
-
     def reset(self):
         self.action = 0
         self.action_chosen = False

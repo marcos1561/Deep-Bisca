@@ -2,6 +2,8 @@ from main import pygame
 from managers import ScreenManager, HandManager
 import os
 
+import bisca_components as bisca_components
+
 class Card(pygame.sprite.Sprite):
     screen_manager: ScreenManager
 
@@ -15,21 +17,28 @@ class Card(pygame.sprite.Sprite):
 
     @staticmethod
     def load_card_image(card_name):
-        card_path = os.path.join("cards_images", card_name + ".jpg")
-        card_image = pygame.image.load(card_path).convert()
+        card_path = os.path.join("images", "cards_images", card_name + ".png")
+        card_image = pygame.image.load(card_path).convert_alpha()
         return card_image
 
     def update_image(self, card_name):
         self.name = card_name
         if card_name == "VAZIO":
-            self.image.fill(pygame.Color(0,0,0,0))
+            self.image.set_alpha(0)
         else:
+            self.image.set_alpha(255)
             self.image = Card.load_card_image(card_name)
             self.image = pygame.transform.scale(self.image, (self.rect.width, self.rect.height))
 
         Card.screen_manager.has_changed = True
-        # self.draw(screen)
 
+    @staticmethod
+    def card_name_from_bisca_card(bisca_card: bisca_components.Card):
+        if bisca_card.is_null:
+            return "VAZIO"
+
+        bisca_suit_to_suit_name = {0: "C", 1: "E", 2: "P", 3: "O"}
+        return f"{bisca_card.number}-{bisca_suit_to_suit_name[bisca_card.suit]}"
 
 class BiscaCard(Card):
     def update_image(self, card_name):
@@ -60,7 +69,8 @@ class HandCard(Card):
         if selected:
             self.update_image("VAZIO")
             
-            HandCard.hand.action = HandCard.hand.hand_idx_to_action[self.card_idx]
+            # HandCard.hand.action = HandCard.hand.hand_idx_to_action[self.card_idx]
+            HandCard.hand.action = self.card_idx
             HandCard.hand.action_chosen = True
             HandCard.hand.played_card = self.name
 

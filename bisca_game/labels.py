@@ -59,10 +59,10 @@ class WinnerLabel(Label):
         self.you_win_round_label = self.font.render(f"{player_name} ganhou!", 1, self.color)
 
     def update_winner_label(self, winner):
-        if winner == 1:
+        if winner == "p1":
             self.text = WinnerLabel.you_win_round_text
             self.image = self.you_win_round_label
-        elif winner == -1:
+        elif winner == "p2":
             self.text = WinnerLabel.bianca_win_round_text
             self.image = self.bianca_win_round_label
         else:
@@ -71,3 +71,9 @@ class WinnerLabel(Label):
 
         WinnerLabel.screen_manager.has_changed = True
         
+
+class NumGames(Label):
+    def update_text(self, num_games):
+        self.text = f"Partidas jogadas: {num_games}"
+        self.image = self.font.render(self.text, 1 , self.color)
+        Label.screen_manager.has_changed = True
