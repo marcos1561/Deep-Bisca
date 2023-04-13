@@ -32,7 +32,9 @@ def main():
 
     ### Scenes ###
     # Game scene
-    model_name = "histpry_6_checkpoint"
+    # model_name = "histpry_6_checkpoint"
+    model_name = "high_gamma_v5.h5"
+    # model_name = "mark"
     game = scenes.Game(model_name, hand_manager, game_display_shape)
 
     # Menu scene

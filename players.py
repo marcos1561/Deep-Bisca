@@ -212,7 +212,9 @@ class NeuralNetwork(Player):
         self.has_observation = True
 
     def get_action(self, observation: np.ndarray):
-        predicted = self.model.predict(observation, verbose=0).flatten()
+        # predicted = self.model.predict(observation, verbose=0).flatten()
+        predicted = self.model(observation).numpy()[0]
+        
 
         num_available_cards = len(self.observation_system.non_null_cards(observation))
         action = np.argmax(predicted[:num_available_cards])
