@@ -286,7 +286,7 @@ class Dnn:
         )
         return (states, actions, rewards, next_states, done_vals, mask)
 
-    def train_neural_network(self):
+    def train_neural_network_old(self):
         MIN_REPLAY_SIZE = self.train_cfg.min_replay_size
         if len(self.replay_memory) < MIN_REPLAY_SIZE:
             return
@@ -322,7 +322,7 @@ class Dnn:
             Y.append(current_qs)
         self.model.fit(np.array(X), np.array(Y), batch_size=batch_size, verbose=0, shuffle=True)
 
-    def train_neural_network_2(self):
+    def train_neural_network(self):
         if len(self.replay_memory) < self.train_cfg.min_replay_size:
             return
 
@@ -457,12 +457,12 @@ class Dnn:
                 # Update the Main Network using the Bellman Equation
                 if self.train_model_count > steps_to_train_model:
                     self.train_model_count =  0
-                    self.train_neural_network_2()
+                    self.train_neural_network()
                 
-                if self.update_target_model_count > steps_to_update_target_model:
-                    # print('Copying main network weights to the target network weights')
-                    # self.target_model.set_weights(self.model.get_weights())
-                    self.update_target_model_count = 0
+                # if self.update_target_model_count > steps_to_update_target_model:
+                #     # print('Copying main network weights to the target network weights')
+                #     # self.target_model.set_weights(self.model.get_weights())
+                #     # self.update_target_model_count = 0
 
                 observation = new_observation.copy()
                 total_training_rewards += reward
