@@ -2,7 +2,7 @@ from main import pygame
 from managers import ScreenManager, HandManager
 import os
 
-import bisca_components as bisca_components
+import bisca_env.bisca_components as bisca_components
 
 class Card(pygame.sprite.Sprite):
     screen_manager: ScreenManager

@@ -1,9 +1,10 @@
 import random
 import numpy as np
 from abc import ABC, abstractmethod
-from bisca_components import Card, NullCard
-from observation import Observation
-from player_hand import Hand
+
+from bisca_env.bisca_components import Card, NullCard
+from bisca_env.observation import Observation
+from bisca_env.player_hand import Hand
 
 class OutPLayer(ABC):
     def __init__(self, observation_system: Observation = None) -> None:

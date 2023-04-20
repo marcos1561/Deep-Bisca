@@ -1,7 +1,7 @@
 import numpy as np
 
-from bisca_components import Suit, Card, NullCard, Deck
-from player_hand import Hand
+from bisca_env.bisca_components import Suit, Card, NullCard, Deck
+from bisca_env.player_hand import Hand
 
 class Observation:
     '''

@@ -1,9 +1,10 @@
 import numpy as np
 
-from bisca_components import Card, Deck, NullCard
-from players import Player, EnvPlayer, Hand
-from observation import Observation
-import rewards
+from bisca_env.bisca_components import Card, Deck, NullCard
+from bisca_env.players import Player, EnvPlayer
+from bisca_env.player_hand import Hand
+from bisca_env.observation import Observation
+import bisca_env.rewards as rewards
 
 class History:
     def __init__(self, observation_system: Observation, p2_obs_system: Observation = None) -> None:
@@ -200,8 +201,8 @@ if __name__ == "__main__":
     
     # print(obs.reshape(5, 5))
 
-    import models
-    import players
+    import bisca_models.models as models
+    import bisca_env.players as players
 
     model = models.Random()
     env = Bisca(players.Random(), verbose=True)

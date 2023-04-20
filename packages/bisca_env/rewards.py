@@ -1,4 +1,4 @@
-from bisca_components import Card
+from bisca_env.bisca_components import Card
 
 class Reward():
     @staticmethod

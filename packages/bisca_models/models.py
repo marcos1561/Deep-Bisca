@@ -9,13 +9,12 @@ import time
 import os
 import pickle
 
-
-from observation import Observation, observation_collection
-import bisca_env as bisca_env 
-import players as players
-from debug_model import DebugModel, TestStates
-import utils
-from loss import compute_loss
+from bisca_env.observation import Observation, observation_collection
+import bisca_env.bisca_env as bisca_env 
+import bisca_env.players as players
+from bisca_models.debug_model import DebugModel, TestStates
+import bisca_env.utils as utils
+from bisca_models.loss import compute_loss
 
 class Exploration:
     name = "exploration"
@@ -218,9 +217,11 @@ class Dnn:
         #     keras.layers.Dense(action_shape,activation='linear', kernel_initializer=init),
         # ])
         model = keras.models.Sequential([
-            keras.layers.Dense(30, input_shape=state_shape, activation='relu', kernel_initializer=init),
-            keras.layers.Dense(30, activation='relu', kernel_initializer=init),
-            keras.layers.Dense(15, activation='relu', kernel_initializer=init),
+            keras.layers.Dense(100, input_shape=state_shape, activation='relu', kernel_initializer=init),
+            keras.layers.Dense(50, activation='relu', kernel_initializer=init),
+            keras.layers.Dense(20, activation='relu', kernel_initializer=init),
+            keras.layers.Dense(20, activation='relu', kernel_initializer=init),
+            keras.layers.Dense(20, activation='relu', kernel_initializer=init),
             keras.layers.Dense(15, activation='relu', kernel_initializer=init),
             keras.layers.Dense(8, activation='relu', kernel_initializer=init),
             keras.layers.Dense(action_shape,activation='linear', kernel_initializer=init,),

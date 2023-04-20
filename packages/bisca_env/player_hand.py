@@ -1,4 +1,4 @@
-from bisca_components import Card, NullCard
+from bisca_env.bisca_components import Card, NullCard
 
 class Hand:
     '''

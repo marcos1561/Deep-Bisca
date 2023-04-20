@@ -5,10 +5,10 @@ import os
 import pickle
 import random
 
-import players as players
-import bisca_env as env
-from observation import Observation
-from bisca_components import Deck
+import bisca_env.players as players
+import bisca_env.bisca_env as env
+from bisca_env.observation import Observation
+from bisca_env.bisca_components import Deck
 
 class TestStates:
     root_folder = "teste_state" 

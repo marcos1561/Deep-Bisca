@@ -1,7 +1,7 @@
-import bisca_env as bisca_env
-import players as players
-from  bisca_components import Card as BiscaCard
-from  observation import Observation, History
+import bisca_env.bisca_env as bisca_env
+import bisca_env.players as players
+from  bisca_env.bisca_components import Card as BiscaCard
+from  bisca_env.observation import Observation, History
 
 import cards, labels, inputs, background
 from managers import SceneManager, ScreenManager

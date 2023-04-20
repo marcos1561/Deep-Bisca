@@ -1,14 +1,12 @@
 import unittest
 import numpy as np
-import random
 
-from bisca_env import Bisca 
-from observation import Observation, History
-from bisca_components import Card, Suit, NullCard, Deck
-import players
-from player_hand import Hand 
-import models
-import rewards
+from bisca_env.bisca_env import Bisca 
+from bisca_env.observation import Observation, History
+from bisca_env.bisca_components import Card, Suit, NullCard, Deck
+import bisca_env.players as players
+from bisca_env.player_hand import Hand 
+import bisca_env.rewards as rewards
 
 class Test_TestWonCard(unittest.TestCase):
     def test_won_card(self):
